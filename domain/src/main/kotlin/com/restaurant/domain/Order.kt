@@ -40,12 +40,12 @@ data class Order(
 }
 
 data class OrderItem(
-    val name: String,
+    val stock: Stock,
     val quantity: Int,
-    val price: Double
+    val price: Double,
 ) {
     internal fun itemCost(): Double = price * quantity
-    fun formattedBillItem(): String = name.padEnd(DESCRIPTION_LENGTH, ' ').substring(0, DESCRIPTION_LENGTH) +
+    fun formattedBillItem(): String = stock.name.padEnd(DESCRIPTION_LENGTH, ' ').substring(0, DESCRIPTION_LENGTH) +
             AT + String.format(PRICE_FORMAT, price).padStart(PRICE_LENGTH, ' ') +
             TIMES + quantity.toString().padStart(QUANTITY_LENGTH, ' ') +
             EQUALS + String.format(PRICE_FORMAT, itemCost()).padStart(PRICE_LENGTH, ' ')

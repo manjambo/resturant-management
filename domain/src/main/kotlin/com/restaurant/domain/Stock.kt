@@ -6,9 +6,9 @@ import java.time.LocalDateTime
 
 open class Stock(
     open val name: String,
-    open val usedFrom: LocalDateTime,
-    open val lifeOnceOpened: Int,
-    open val unit: String,
+    open val usedFrom: LocalDateTime= LocalDateTime.now(),
+    open val lifeOnceOpened: Int = 1,
+    open val unit: String = "each",
     open val allergens: List<Allergen> = listOf(),
     open val minimumStock: Int = 10,
 )

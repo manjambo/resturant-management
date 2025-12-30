@@ -5,13 +5,13 @@ classDiagram
         <<open>>
         +String name
     }
-    
+
     class Customer {
         +String name
         +int age
         +customer(String, int)$ Customer
     }
-    
+
     class Staff {
         <<open>>
         +String name
@@ -19,25 +19,25 @@ classDiagram
         +AreaType area
         +floorStaff(String)$ Staff
     }
-    
+
     class RoleType {
         <<enumeration>>
         SUPERVISOR
         WORKER
     }
-    
+
     class AreaType {
         <<enumeration>>
         BAR
         FLOOR
         KITCHEN
     }
-    
+
     class Site {
         +String name
         +List~Staff~ staff
     }
-    
+
     class Order {
         +String id
         +int tableNumber
@@ -47,15 +47,15 @@ classDiagram
         +fullItemisedFormattedBill() List~String~
         +lineLength()$ int
     }
-    
+
     class OrderItem {
-        +String name
+        +Stock stock
         +int quantity
         +double price
         +itemCost() double
         +formattedBillItem() String
     }
-    
+
     class Stock {
         <<open>>
         +String name
@@ -65,7 +65,7 @@ classDiagram
         +List~Allergen~ allergens
         +int minimumStock
     }
-    
+
     class Allergen {
         <<enumeration>>
         PEANUTS
@@ -83,7 +83,7 @@ classDiagram
         MOLLUSCS
         MUSTARD
     }
-    
+
     class Larder {
         +LarderType larderType
         +MutableList~Pair~Stock, Int~~ items
@@ -91,40 +91,40 @@ classDiagram
         -updateLarderByType(Pair~Stock, Int~, LarderType) void
         +larderByType(LarderType) Larder
     }
-    
+
     class LarderType {
         <<enumeration>>
         FREEZER
         FRIDGE
         CUPBOARD
     }
-    
+
     class Batch {
         +Pair~Stock, Int~ item
         +boolean frozen
         +boolean fresh
     }
-    
+
     class Delivery {
         +List~Batch~ batches
         +LocalDateTime expected
     }
-    
+
     class Orange {
         +LocalDateTime usedFrom
         +int lifeOnceOpened
     }
-    
+
     class Sausage {
         +LocalDateTime usedFrom
         +int lifeOnceOpened
     }
-    
+
     class Bacon {
         +LocalDateTime usedFrom
         +int lifeOnceOpened
     }
-    
+
     Person <|-- Customer
     Person <|-- Staff
     Staff --> RoleType
@@ -133,6 +133,7 @@ classDiagram
     Order "1" *-- "*" OrderItem
     Order --> Customer
     Order --> Staff
+    OrderItem --> Stock
     Stock <|-- Orange
     Stock <|-- Sausage
     Stock <|-- Bacon

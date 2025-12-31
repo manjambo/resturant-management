@@ -1,5 +1,7 @@
 package com.restaurant.domain
 
+import com.restaurant.domain.Allergen.GLUTEN
+import com.restaurant.domain.Allergen.SULPHUR_DIOXIDE
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
@@ -9,6 +11,17 @@ import io.kotest.matchers.shouldNotBe
 import java.time.LocalDateTime
 
 class StockTest : BehaviorSpec({
+    class Orange(
+        override val lifeOnceOpened: Int=1,
+    ) : Stock("orange", lifeOnceOpened = lifeOnceOpened)
+
+    class Sausage(
+        override val lifeOnceOpened: Int=5,
+    ) : Stock("sausage", lifeOnceOpened = lifeOnceOpened, allergens = listOf(GLUTEN), minimumStock = 25, lowStock = 50)
+
+    class Bacon(
+        override val lifeOnceOpened: Int=7,
+    ) : Stock("bacon", lifeOnceOpened = lifeOnceOpened, allergens = listOf(SULPHUR_DIOXIDE))
 
     given("a StockItem") {
         val now = LocalDateTime.now()
@@ -53,19 +66,14 @@ class StockTest : BehaviorSpec({
     }
 
     given("a Batch") {
-        val stockItem = Orange(
-            usedFrom = LocalDateTime.now(),
-            lifeOnceOpened = 3
-        )
         val batch = Batch(
-            item = Pair(stockItem, 50),
-            frozen = false,
-            fresh = true
+            Pair(Orange(), 50),
+            LarderType.FRIDGE,
         )
 
         `when`("created with fresh items") {
             then("it should contain the correct stock item") {
-                batch.item.first shouldBe stockItem
+                batch.item.first.name shouldBe Orange().name
             }
 
             then("it should have the correct quantity") {
@@ -73,39 +81,20 @@ class StockTest : BehaviorSpec({
             }
 
             then("it should be marked as fresh") {
-                batch.fresh shouldBe true
-            }
-
-            then("it should not be marked as frozen") {
-                batch.frozen shouldBe false
+                batch.larderType shouldBe LarderType.FRIDGE
             }
         }
 
-        `when`("created with frozen items") {
-            val frozenBatch = Batch(
-                item = Pair(stockItem, 100),
-                frozen = true,
-                fresh = false
-            )
-
-            then("it should be marked as frozen") {
-                frozenBatch.frozen shouldBe true
-            }
-
-            then("it should not be marked as fresh") {
-                frozenBatch.fresh shouldBe false
-            }
-        }
     }
 
     given("a Delivery") {
         val now = LocalDateTime.now()
-        val orange = Orange(usedFrom = now, lifeOnceOpened = 3)
-        val sausage = Sausage(usedFrom = now, lifeOnceOpened = 5)
+        val orange = Orange()
+        val sausage = Sausage()
 
         val batches = listOf(
-            Batch(item = Pair(orange, 50), frozen = false, fresh = true),
-            Batch(item = Pair(sausage, 30), frozen = true, fresh = false)
+            Batch(item = Pair(orange, 50), LarderType.FRIDGE),
+            Batch(item = Pair(sausage, 30), LarderType.FREEZER)
         )
 
         val expectedTime = LocalDateTime.of(2024, 1, 25, 14, 0)
@@ -145,9 +134,9 @@ class StockTest : BehaviorSpec({
 
     given("different StockItem types") {
         val now = LocalDateTime.now()
-        val orange = Orange(usedFrom = now, lifeOnceOpened = 3)
-        val sausage = Sausage(usedFrom = now, lifeOnceOpened = 5)
-        val bacon = Bacon(usedFrom = now, lifeOnceOpened = 7)
+        val orange = Orange(3)
+        val sausage = Sausage()
+        val bacon = Bacon()
 
         `when`("comparing allergens") {
             then("orange should have no allergens") {

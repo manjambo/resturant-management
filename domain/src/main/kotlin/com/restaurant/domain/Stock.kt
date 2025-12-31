@@ -6,10 +6,11 @@ import java.time.LocalDateTime
 
 open class Stock(
     open val name: String,
-    open val usedFrom: LocalDateTime= LocalDateTime.now(),
+    open val usedFrom: LocalDateTime = LocalDateTime.now(),
     open val lifeOnceOpened: Int = 1,
     open val unit: String = "each",
     open val allergens: List<Allergen> = listOf(),
+    open val lowStock: Int = 25,
     open val minimumStock: Int = 10,
 )
 
@@ -39,38 +40,14 @@ data class Larder(
     fun larderByType(larderType: LarderType): Larder = Larder(larderType, items = mutableListOf())
 }
 
-enum class LarderType { FREEZER, FRIDGE, CUPBOARD, }
+enum class LarderType { FREEZER, FRIDGE, FRESH, CUPBOARD, }
 
 data class Batch(
     val item: Pair<Stock, Int>,
-    val frozen: Boolean,
-    val fresh: Boolean,
+    val larderType: LarderType
 )
 
 data class Delivery(
     val batches: List<Batch>,
     val expected: LocalDateTime,
 )
-
-data class Orange(
-    override val usedFrom: LocalDateTime,
-    override val lifeOnceOpened: Int,
-) : Stock("orange", usedFrom, lifeOnceOpened, "each")
-
-data class Sausage(
-    override val usedFrom: LocalDateTime,
-    override val lifeOnceOpened: Int,
-) : Stock("sausage", usedFrom, lifeOnceOpened, unit = "each", listOf(GLUTEN))
-
-data class Bacon(
-    override val usedFrom: LocalDateTime,
-    override val lifeOnceOpened: Int,
-) : Stock("bacon", usedFrom, lifeOnceOpened, unit = "rasher", listOf(SULPHUR_DIOXIDE))
-
-/*
-data class <StockItem>(
-    override val name: String,
-    override val usedFrom: LocalDateTime,
-    override val lifeOnceOpened: Int,
-) : StockItem(name, usedFrom, lifeOnceOpened)
-*/

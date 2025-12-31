@@ -49,7 +49,8 @@ classDiagram
     }
 
     class OrderItem {
-        +Stock stock
+        +String name
+        +List~Stock~ consistsOf
         +int quantity
         +double price
         +itemCost() double
@@ -63,6 +64,7 @@ classDiagram
         +int lifeOnceOpened
         +String unit
         +List~Allergen~ allergens
+        +int lowStock
         +int minimumStock
     }
 
@@ -95,34 +97,19 @@ classDiagram
     class LarderType {
         <<enumeration>>
         FREEZER
+        FRESH
         FRIDGE
         CUPBOARD
     }
 
     class Batch {
         +Pair~Stock, Int~ item
-        +boolean frozen
-        +boolean fresh
+        +LarderType larderType
     }
 
     class Delivery {
         +List~Batch~ batches
         +LocalDateTime expected
-    }
-
-    class Orange {
-        +LocalDateTime usedFrom
-        +int lifeOnceOpened
-    }
-
-    class Sausage {
-        +LocalDateTime usedFrom
-        +int lifeOnceOpened
-    }
-
-    class Bacon {
-        +LocalDateTime usedFrom
-        +int lifeOnceOpened
     }
 
     Person <|-- Customer
@@ -133,13 +120,11 @@ classDiagram
     Order "1" *-- "*" OrderItem
     Order --> Customer
     Order --> Staff
-    OrderItem --> Stock
-    Stock <|-- Orange
-    Stock <|-- Sausage
-    Stock <|-- Bacon
+    OrderItem "1" *-- "*" Stock
     Stock --> Allergen
     Larder --> LarderType
     Larder "1" *-- "*" Stock
     Batch --> Stock
+    Batch --> LarderType
     Delivery "1" *-- "*" Batch
 ```
